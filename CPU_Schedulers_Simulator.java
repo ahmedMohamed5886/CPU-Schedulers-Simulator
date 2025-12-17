@@ -78,4 +78,34 @@ public class CPU_Schedulers_Simulator
     {
 
     }
+    public static void agSchedule(List<Process> list) {
+        Queue<Process> queue = new LinkedList<>(list);
+        int time = 0;
+
+        System.out.println("\nAG Scheduling Execution Order:");
+
+        while (!queue.isEmpty()) {
+            Process p = queue.poll();
+
+            if (p.remaining <= 0) continue;
+
+            System.out.print("(" + p.name + " Q=" + p.quantum + ") ");
+
+            int quarter = (int) Math.ceil(p.quantum * 0.25);
+            int run = Math.min(quarter, p.remaining);
+
+            time += run;
+            p.remaining -= run;
+
+            if (p.remaining == 0) {
+                p.turnaround = time - p.arrival;
+                p.waiting = p.turnaround - p.burst;
+            } else {
+                p.quantum += 2;
+                queue.add(p);
+            }
+        }
+
+        System.out.println();
+    }
 }
